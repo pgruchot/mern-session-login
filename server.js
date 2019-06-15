@@ -21,7 +21,7 @@ server.use(session({
 server.use(passport.initialize());
 server.use(passport.session());
 
-server.use('/auth', require('./auth'));
+server.use('/auth', require('./auth/router.js'));
 
 mongoose.connect(keys.mongoDB.dbURI, {useNewUrlParser: true}).then(
     () => {
