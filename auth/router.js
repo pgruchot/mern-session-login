@@ -1,16 +1,17 @@
 const express = require('express');
 const router = express.Router();
 const User = require('../models/user');
-const passport = require('passport');
+const passport = require('../passport');
 
-router.get('/facebook', passport.authenticate('facebook', { scope: ['profile'] }));
+router.get('/facebook', passport.authenticate('facebook', { scope: ['public_profile', 'email'] }));
 router.get('/facebook/callback', passport.authenticate('facebook', {
-    successRedirect: '/',
-    failureRedirect: '/login'
-})
+    failureRedirect: 'http://localhost:3000/login'
+}), function(req, res) {
+    res.redirect("http://localhost:3000/");
+}
 );
 
-router.get('/user', (req, res, next) => {
+router.get('/user', (req, res) => {
     console.log('---- user ----');
     console.log(req.user);
     if(req.user) {
@@ -60,9 +61,10 @@ router.post('/signup', (req, res) => {
         }
         const newUser = new User({
             'local.username': username,
-            'local.password': password
+            'local.password': newUser.hashPassword(password),
         });
         newUser.save((err, savedUser) => {
+            
             if(err) 
                 return res.json(err);
             return res.json(savedUser);

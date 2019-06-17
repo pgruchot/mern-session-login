@@ -3,7 +3,7 @@ const bodyParser = require('body-parser');
 const morgan = require('morgan');
 const session = require('express-session');
 const mongoose = require('mongoose');
-const passport = require('passport');
+const passport = require('./passport');
 
 const keys = require('./config/keys.js');
 

@@ -13,10 +13,10 @@ const strategy = new FacebookStrategy({
     console.log(profile);
     console.log('---- end of profile ----');
 
-    const { id, name, photos } = profile;
-    User.findOne({ 'facebook.id' : id }, (err, userMatch) => {
+    const { id, name, photos, emails } = profile;
+    User.findOne({ 'facebook.facebookId' : id }, (err, userMatch) => {
         if(err) {
-            console.log('Error while looking for googleid');
+            console.log('Error while looking for facebookId');
             console.log(err);
             return done(null, false);
         }
