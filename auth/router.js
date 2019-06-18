@@ -3,6 +3,8 @@ const router = express.Router();
 const User = require('../models/user');
 const passport = require('../passport');
 
+
+//passport routes for Oauth providers, react href get requests
 router.get('/facebook', passport.authenticate('facebook', { scope: ['public_profile', 'email'] }));
 router.get('/facebook/callback', passport.authenticate('facebook', {
     failureRedirect: 'http://localhost:3000/login'
@@ -11,6 +13,7 @@ router.get('/facebook/callback', passport.authenticate('facebook', {
 }
 );
 
+//get user data route if authenticated
 router.get('/user', (req, res) => {
     console.log('---- user ----');
     console.log(req.user);
@@ -21,11 +24,11 @@ router.get('/user', (req, res) => {
     }
 })
 
+//Login request for passport local
 router.post(
-    '/login', (req, res, next) => {
+    '/login', (req, res) => {
         console.log(req.body);
         console.log('----');
-        next();
     },
     passport.authenticate('local'),
     (req, res) => {
@@ -40,6 +43,7 @@ router.post(
     }
 );
 
+//logout route
 router.post('/logout', (req, res) => {
     if(req.user) {
         req.session.destroy();
@@ -50,25 +54,51 @@ router.post('/logout', (req, res) => {
     }
 });
 
+//passport local signup route
 router.post('/signup', (req, res) => {
-    const { username, password } = req.body;
+    const { username, firstName, lastName, email, password, password2 } = req.body;
     //validation needed here
-    User.findOne({ 'local.username': username }, (err, userMatch) => {
+
+    //check db for duplicate email or username
+    User.findOne({$or:[{email: email},{'local.username': username}]}, (err, userMatch) => {
         if(userMatch) {
             return res.json({
-                error: `Sorry, we already have one of you ${username} in here`
+                errmsg: `Sorry, we already have one of you ${email} or ${username} in here`
             });
         }
-        const newUser = new User({
-            'local.username': username,
-            'local.password': newUser.hashPassword(password),
-        });
-        newUser.save((err, savedUser) => {
+        //now check if passwords match
+        else if(password !== password2) {
+            return res.json({
+                errmsg: 'Dont you think that passwords should match?'
+            });
+        }
+        //everything k, create user
+        else {
             
-            if(err) 
-                return res.json(err);
-            return res.json(savedUser);
-        });
+            //every field if assigned so that empty db wont create half-document schema
+            let newUser = new User();
+                newUser.local.username = username;
+                newUser.local.password = newUser.hashPassword(password);
+                newUser.firstName = firstName;
+                newUser.lastName = lastName;
+                newUser.email = email;
+                newUser.facebook.facebookId = '';
+                newUser.photos = [];
+            
+            //save user with assigned properties
+            newUser.save((err) => {
+                if (err) {
+                    return res.json({
+                        errmsg: `Error while saving the user to database: ${err}`,
+                    });
+                } else {
+                    return res.json({ errmsg: '' });
+                }
+            });
+            
+        }
     });
+  
+    
 })
 module.exports = router;

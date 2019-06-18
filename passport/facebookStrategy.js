@@ -14,7 +14,7 @@ const strategy = new FacebookStrategy({
     console.log('---- end of profile ----');
 
     const { id, name, photos, emails } = profile;
-    User.findOne({ 'facebook.facebookId' : id }, (err, userMatch) => {
+    User.findOne({ 'email' : emails[0].value }, (err, userMatch) => {
         if(err) {
             console.log('Error while looking for facebookId');
             console.log(err);
