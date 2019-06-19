@@ -30,20 +30,36 @@ router.get('/user', (req, res) => {
     }
 })
 
-//Login request for passport local
-router.post(
-    '/login', passport.authenticate('local'),
-    (req, res) => {
-        console.log(req.data);
+
+router.post('/login', function(req, res, next) {
+    passport.authenticate('local', function(err, user, info) {
+        if (err) {
+        return next(err); // will generate a 500 error
+        }
+        // Generate a JSON response reflecting authentication status
+        if (! user) {
+        return res.json({errmsg: info.errmsg});
+        }
+        // ***********************************************************************
+        // "Note that when using a custom callback, it becomes the application's
+        // responsibility to establish a session (by calling req.login()) and send
+        // a response."
+        // Source: http://passportjs.org/docs
+        // ***********************************************************************
+        req.login(user, loginErr => {
+        if (loginErr) {
+            return next(loginErr);
+        }
         console.log('POST to /login');
-        const user = JSON.parse(JSON.stringify(req.user));
-        const cleanUser = Object.assign({}, user);
+        const cleanUser = Object.assign({}, user._doc);
         if(cleanUser.local) {
             delete cleanUser.local.password;
         }
-        res.json({ user: cleanUser });
-    }
-);
+        return res.json({ user: cleanUser});
+        });      
+    })(req, res, next);
+    });
+
 
 //logout route
 router.post('/logout', (req, res) => {
