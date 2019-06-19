@@ -3,18 +3,22 @@ const LocalStrategy = require('passport-local').Strategy;
 
 const strategy = new LocalStrategy(
     {
-        usernameField: 'username'
+        usernameField: 'email',
+        passwordField: 'password'
     },
-    (username, password, done) => {
-        User.findOne({ 'local.username': username }, (err, userMatch) => {
+    (email, password, done) => {
+        User.findOne({ 'email': email }, (err, userMatch) => {
             if(err) {
-                return done(err);
+                return done({ errmsg: `Error occured: ${err}`});
             };
             if(!userMatch) {
-                return done(null, false, { message: 'Incorrect username' });
+                return done(null, false, { errmsg: 'Incorrect email' });
             };
-            if(!userMatch.checkPassword(password)) {
-                return done(null, false, { message: 'Incorrect password' });
+            if(!userMatch.local.password) {
+                return done(null, false, { errmsg: 'Login through Oauth please' });
+            }
+            if(!userMatch.checkPassword(password, userMatch.local.password)) {
+                return done(null, false, { errmsg: 'Incorrect password' });
             };
             return done(null, userMatch);
         })

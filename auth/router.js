@@ -9,6 +9,7 @@ router.get('/facebook', passport.authenticate('facebook', { scope: ['public_prof
 router.get('/facebook/callback', passport.authenticate('facebook', {
     failureRedirect: 'http://localhost:3000/login'
 }), function(req, res) {
+
     res.redirect("http://localhost:3000/");
 }
 );
@@ -18,7 +19,12 @@ router.get('/user', (req, res) => {
     console.log('---- user ----');
     console.log(req.user);
     if(req.user) {
-        return res.json({ user: req.user });
+        const user = JSON.parse(JSON.stringify(req.user));
+        const cleanUser = Object.assign({}, user);
+        if(cleanUser.local) {
+            delete cleanUser.local.password;
+        }
+        return res.json({ user: cleanUser });
     } else {
         return res.json({ user: null });
     }
@@ -26,17 +32,13 @@ router.get('/user', (req, res) => {
 
 //Login request for passport local
 router.post(
-    '/login', (req, res) => {
-        console.log(req.body);
-        console.log('----');
-    },
-    passport.authenticate('local'),
+    '/login', passport.authenticate('local'),
     (req, res) => {
+        console.log(req.data);
         console.log('POST to /login');
         const user = JSON.parse(JSON.stringify(req.user));
         const cleanUser = Object.assign({}, user);
         if(cleanUser.local) {
-            console.log(`Deleting ${cleanUser.local.password}`);
             delete cleanUser.local.password;
         }
         res.json({ user: cleanUser });

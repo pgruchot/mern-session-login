@@ -17,7 +17,7 @@ class AuthProvider extends React.Component {
 
     componentDidMount() {
         axios.get('/auth/user').then(response => {
-			console.log(response.data)
+            console.log('componentdidmount authcontext called');
 			if (response.data.user) {
 				console.log('THERE IS A USER')
 				this.setState({
@@ -33,22 +33,24 @@ class AuthProvider extends React.Component {
 		})
     }
 
-    login(username, password) {
+    login(e, email, password, updateErrors) {
          // setting timeout to mimic an async login    setTimeout(() => this.setState({ isAuth: true }), 1000)  
-         
+         e.preventDefault();
          axios
          .post('/auth/login', {
-             username,
+             email,
              password
          })
          .then(response => {
              console.log(response)
-             if (response.status === 200) {
+             if (response.data.user) {
                  // update the state
                  this.setState({
                      isAuth: true,
                      user: response.data.user
                  })
+             } else {
+                 updateErrors(response.data.errmsg)
              }
          })
     }
