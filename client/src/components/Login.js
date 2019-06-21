@@ -5,7 +5,7 @@ class Login extends Component {
     constructor() {
         super();
         this.state = {
-            email: '',
+            username: '',
             password: '',
         };
         this.handleChange = this.handleChange.bind(this);
@@ -45,8 +45,8 @@ class Login extends Component {
                                         <form className="col s12">
                                             <div className="row">
                                                 <div className="input-field col s6">
-                                                    <input placeholder="Placeholder" name="email" type="email" className="validate"  onChange={this.handleChange}/>
-                                                    <label for="email">Email</label>
+                                                    <input placeholder="Placeholder" name="username" type="text" className="validate"  onChange={this.handleChange}/>
+                                                    <label for="username">Username</label>
                                                 </div>
                                             </div>
                                             <div className="row">
@@ -56,7 +56,7 @@ class Login extends Component {
                                                 </div>
                                             </div>
                                             <div className="row">
-                                                <button className="btn waves-effect waves-light" onClick={(e) => {login(e, this.state.email, this.state.password, this.updateErrors)}}>Submit
+                                                <button className="btn waves-effect waves-light" onClick={(e) => {login(e, this.state.username, this.state.password, this.updateErrors)}}>Submit
                                                     <i className="material-icons right">send</i>
                                                 </button>
                                             </div>

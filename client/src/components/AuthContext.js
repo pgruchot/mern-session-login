@@ -33,12 +33,12 @@ class AuthProvider extends React.Component {
 		})
     }
 
-    login(e, email, password, updateErrors) {
+    login(e, username, password, updateErrors) {
          // setting timeout to mimic an async login    setTimeout(() => this.setState({ isAuth: true }), 1000)  
          e.preventDefault();
          axios
          .post('/auth/login', {
-             email,
+             username,
              password
          })
          .then(response => {

@@ -74,14 +74,14 @@ router.post('/logout', (req, res) => {
 
 //passport local signup route
 router.post('/signup', (req, res) => {
-    const { username, firstName, lastName, email, password, password2 } = req.body;
+    const { username, email, password, password2 } = req.body;
     //validation needed here
 
     //check db for duplicate email or username
-    User.findOne({$or:[{email: email},{'local.username': username}]}, (err, userMatch) => {
+    User.findOne({'local.username': username}, (err, userMatch) => {
         if(userMatch) {
             return res.json({
-                errmsg: `Sorry, we already have one of you ${email} or ${username} in here`
+                errmsg: `Sorry, we already have one of you ${username} in here`
             });
         }
         //now check if passwords match
@@ -97,12 +97,8 @@ router.post('/signup', (req, res) => {
             let newUser = new User();
                 newUser.local.username = username;
                 newUser.local.password = newUser.hashPassword(password);
-                newUser.firstName = firstName;
-                newUser.lastName = lastName;
                 newUser.email = email;
-                newUser.facebook.facebookId = '';
-                newUser.photos = [];
-            
+
             //save user with assigned properties
             newUser.save((err) => {
                 if (err) {

@@ -75,18 +75,6 @@ class Signup extends Component {
                                     </div>
                                     <div className="row">
                                         <div className="input-field col s6">
-                                            <input placeholder="Placeholder" name="firstName" type="text" className="validate"  onChange={this.handleChange}/>
-                                            <label for="username">First Name</label>
-                                        </div>
-                                    </div>
-                                    <div className="row">
-                                        <div className="input-field col s6">
-                                            <input placeholder="Placeholder" name="lastName" type="text" className="validate"  onChange={this.handleChange}/>
-                                            <label for="username">Last Name</label>
-                                        </div>
-                                    </div>
-                                    <div className="row">
-                                        <div className="input-field col s6">
                                             <input placeholder="Placeholder" name="email" type="email" className="validate"  onChange={this.handleChange}/>
                                             <label for="username">Email</label>
                                         </div>
