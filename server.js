@@ -5,11 +5,14 @@ const session = require('express-session');
 const mongoose = require('mongoose');
 const passport = require('./passport');
 
+//api keys
 const keys = require('./config/keys.js');
 
+//basic
 const server = express();
 const PORT = 5000;
 
+//setup
 server.use(morgan('dev'));
 server.use(bodyParser.urlencoded({ extended: true }));
 server.use(bodyParser.json());
@@ -21,8 +24,10 @@ server.use(session({
 server.use(passport.initialize());
 server.use(passport.session());
 
+//routes
 server.use('/auth', require('./auth/router.js'));
 
+//db connection
 mongoose.connect(keys.mongoDB.dbURI, {useNewUrlParser: true}).then(
     () => {
         console.log('Connected to database :)');

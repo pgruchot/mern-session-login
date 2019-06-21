@@ -3,11 +3,13 @@ const LocalStrategy = require('./localStrategy');
 const FacebookStrategy = require('./facebookStrategy');
 const User = require('../models/user');
 
+//save cookie
 passport.serializeUser((user, done) => {
     console.log('---- serializing user ----');
     done(null, { _id: user._id });
 });
 
+//read cookie
 passport.deserializeUser((id, done) => {
     console.log('---- deserializing user ----');
     User.findOne(

@@ -14,16 +14,19 @@ const strategy = new FacebookStrategy({
     console.log('---- end of profile ----');
 
     const { id, name, photos, emails } = profile;
+    //check db for id
     User.findOne({ 'facebook.facebookId' : id }, (err, userMatch) => {
+        //errors
         if(err) {
             console.log('Error while looking for facebookId');
             console.log(err);
             return done(null, false);
         }
-
+        //user found
         if(userMatch) {
             return done(null, userMatch);
         } else {
+            //create user
             console.log('---- pre save ----');
             console.log(id);
             console.log(profile);
@@ -35,7 +38,7 @@ const strategy = new FacebookStrategy({
                 lastName: name.familyName,
                 photos: photos,
             });
-
+            //save to db
             newFacebookUser.save((err, savedUser) => {
                 if(err) {
                     console.log('Error while saving facebook user');
