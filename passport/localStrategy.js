@@ -9,13 +9,13 @@ const strategy = new LocalStrategy(
     (username, password, done) => {
         User.findOne({ 'local.username': username }, (err, userMatch) => {
             if(err) {
-                return done({ errmsg: `Error occured: ${err}`});
+                return done({ db: `Error occured: ${err}`});
             };
             if(!userMatch) {
-                return done(null, false, { errmsg: 'Incorrect username' });
+                return done(null, false, { username: 'Incorrect username' });
             };
             if(!userMatch.checkPassword(password, userMatch.local.password)) {
-                return done(null, false, { errmsg: 'Incorrect password' });
+                return done(null, false, { password: 'Incorrect password' });
             };
             return done(null, userMatch);
         })

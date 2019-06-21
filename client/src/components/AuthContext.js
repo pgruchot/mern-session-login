@@ -17,7 +17,6 @@ class AuthProvider extends React.Component {
 
     componentDidMount() {
         axios.get('/auth/user').then(response => {
-            console.log('componentdidmount authcontext called');
 			if (response.data.user) {
 				console.log('THERE IS A USER')
 				this.setState({
@@ -50,7 +49,7 @@ class AuthProvider extends React.Component {
                      user: response.data.user
                  })
              } else {
-                 updateErrors(response.data.errmsg)
+                 updateErrors(response.data.errors)
              }
          })
     }

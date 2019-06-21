@@ -7,15 +7,16 @@ class Login extends Component {
         this.state = {
             username: '',
             password: '',
+            errors: ''
         };
         this.handleChange = this.handleChange.bind(this);
         this.updateErrors = this.updateErrors.bind(this);
 
     };
 
-    updateErrors(errmsg) {
+    updateErrors(errors) {
         this.setState({
-            errmsg
+            errors: errors
         })
     }
 
@@ -27,10 +28,12 @@ class Login extends Component {
 
     
     render() { 
-        const errors = this.state.errmsg ? ( 
-        <div>
-            <h2>{this.state.errmsg}</h2>
-        </div>) : (null);
+        const errors = this.state.errors ? ( 
+            Object.keys(this.state.errors).map(err => {
+                return <h2>{this.state.errors[err]}</h2>
+            })
+            ) : (null);
+        
         return(
             <div>
                 <AuthConsumer>
@@ -39,7 +42,9 @@ class Login extends Component {
 			                <Redirect to={{ pathname: '/' }} /> 
                         ) : (
                             <div>
-                                {errors}
+                                <div>
+                                    {errors}
+                                </div>
                                 <div className="container">
                                     <div className="row">
                                         <form className="col s12">

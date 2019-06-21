@@ -6,13 +6,11 @@ class Signup extends Component {
         super();
         this.state = {
             username: '',
-            firstName: '',
-            lastName: '',
             email: '',
             password: '',
             password2: '',
             redirectTo: '',
-            errmsg: '',
+            errors: '',
         };
 
         this.handleSubmit = this.handleSubmit.bind(this);
@@ -30,23 +28,21 @@ class Signup extends Component {
         console.log('handleSubmit called...');
         axios.post('/auth/signup', {
             username: this.state.username,
-            firstName: this.state.firstName,
-            lastName: this.state.lastName,
             email: this.state.email,
             password: this.state.password,
             password2: this.state.password2,
         }).then(response => {
-            if(!response.data.errmsg) {
+            if(!response.data.errors) {
                 console.log('Youre good people');
                 this.setState({
                     redirectTo: '/login'
                 })
             } else {
                 console.log('getting here')
-                console.log(JSON.stringify(response.data));
+                console.log(response.data)
 
                 this.setState({
-                    errmsg: response.data.errmsg
+                    errors: response.data.errors
                 })
             }
         })
@@ -56,14 +52,17 @@ class Signup extends Component {
         if (this.state.redirectTo) {
 			return <Redirect to={{ pathname: this.state.redirectTo }} />
         } 
-        const errors = this.state.errmsg ? ( 
-            <div>
-                <h2>{this.state.errmsg}</h2>
-            </div>) : (null);
+        const errors = this.state.errors ? ( 
+            Object.keys(this.state.errors).map(err => {
+                return <h2>{this.state.errors[err]}</h2>
+            })
+            ) : (null);
         
         return(
-            <div>   
-                {errors}
+            <div>
+                <div>   
+                    {errors}
+                </div>
                         <div className="container">
                             <div className="row">
                                 <form className="col s12">

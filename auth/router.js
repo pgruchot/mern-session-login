@@ -2,7 +2,8 @@ const express = require('express');
 const router = express.Router();
 const User = require('../models/user');
 const passport = require('../passport');
-
+const validateSignupInput = require('../validation/signup');
+const validateLoginInput = require('../validation/login');
 
 //passport routes for Oauth providers, react href get requests
 router.get('/facebook', passport.authenticate('facebook', { scope: ['public_profile', 'email'] }));
@@ -31,14 +32,24 @@ router.get('/user', (req, res) => {
 })
 
 
-router.post('/login', function(req, res, next) {
+router.post('/login', (req, res, next) => {
+    const { errors, isValid } = validateLoginInput(req.body);
+    console.log(isValid);
+    if(!isValid) {
+        return res.json({'errors': errors});
+    } else {
+        next();
+    }
+
+} ,function(req, res, next) {
     passport.authenticate('local', function(err, user, info) {
         if (err) {
         return next(err); // will generate a 500 error
         }
+
         // Generate a JSON response reflecting authentication status
-        if (! user) {
-        return res.json({errmsg: info.errmsg});
+        if (!user) {
+        return res.json({'errors': info});
         }
         // ***********************************************************************
         // "Note that when using a custom callback, it becomes the application's
@@ -76,24 +87,20 @@ router.post('/logout', (req, res) => {
 router.post('/signup', (req, res) => {
     const { username, email, password, password2 } = req.body;
     //validation needed here
-
+    const { errors, isValid } = validateSignupInput(req.body);
+    if(!isValid) {
+        return res.json({'errors': errors});
+    }
     //check db for duplicate email or username
     User.findOne({'local.username': username}, (err, userMatch) => {
         if(userMatch) {
             return res.json({
-                errmsg: `Sorry, we already have one of you ${username} in here`
-            });
-        }
-        //now check if passwords match
-        else if(password !== password2) {
-            return res.json({
-                errmsg: 'Dont you think that passwords should match?'
+                'errors': {username: `Username ${username} duplicate`}
             });
         }
         //everything k, create user
         else {
             
-            //every field if assigned so that empty db wont create half-document schema
             let newUser = new User();
                 newUser.local.username = username;
                 newUser.local.password = newUser.hashPassword(password);
@@ -103,10 +110,12 @@ router.post('/signup', (req, res) => {
             newUser.save((err) => {
                 if (err) {
                     return res.json({
-                        errmsg: `Error while saving the user to database: ${err}`,
+                        'errors': {db: `Error while saving the user to database: ${err}`}
                     });
                 } else {
-                    return res.json({ errmsg: '' });
+                    return res.json({
+                        'errors': ''
+                    });
                 }
             });
             
