@@ -9,16 +9,16 @@ const validateLoginInput = require('../validation/login');
 router.get('/facebook', passport.authenticate('facebook', { scope: ['public_profile', 'email'] }));
 router.get('/facebook/callback', passport.authenticate('facebook', {
     failureRedirect: 'http://localhost:3000/login'
-}), (res, res) => {
+}), (req, res) => {
     res.redirect("http://localhost:3000/");
 }
 );
 
 //get user data route if authenticated
 router.get('/user', (req, res) => {
-    console.log('---- user ----');
-    console.log(req.user);
     if(req.user) {
+        console.log('---- user present ----');
+        console.log(req.user);
         const user = JSON.parse(JSON.stringify(req.user));
         const cleanUser = Object.assign({}, user);
         if(cleanUser.local) {

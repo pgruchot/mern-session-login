@@ -1,13 +1,9 @@
 import React from 'react';
 import { Route, Redirect } from 'react-router-dom';
-import { AuthConsumer } from './AuthContext';
+import withAuthContext from './withAuthContext';
 
 const ProtectedRoute = ({ component: Component, ...rest }) => (
-    <AuthConsumer>
-        {({ isAuth }) => (
-            <Route render={ props => isAuth ? <Component {...props} /> : <Redirect to="/" />} {...rest} />
-        )}
-    </AuthConsumer>
+    <Route render={ props => rest.context.isAuth ? <Component {...props} /> : <Redirect to="/" />} {...rest} />
 )
 
-export default ProtectedRoute;
+export default withAuthContext(ProtectedRoute);

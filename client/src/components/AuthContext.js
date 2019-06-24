@@ -76,6 +76,6 @@ class AuthProvider extends React.Component {
         )
     }
 }
-const AuthConsumer = AuthContext.Consumer;
 
-export { AuthProvider, AuthConsumer };
+
+export { AuthProvider, AuthContext };

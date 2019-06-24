@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { Redirect } from 'react-router-dom'
-import { AuthConsumer } from './AuthContext';
+import withAuthContext from './withAuthContext';
 class Login extends Component {
     constructor() {
         super();
@@ -36,9 +36,8 @@ class Login extends Component {
         
         return(
             <div>
-                <AuthConsumer>
-                    {({ isAuth, login }) => (
-                         isAuth ? (
+
+                        {this.props.context.isAuth ? (
 			                <Redirect to={{ pathname: '/' }} /> 
                         ) : (
                             <div>
@@ -61,7 +60,7 @@ class Login extends Component {
                                                 </div>
                                             </div>
                                             <div className="row">
-                                                <button className="btn waves-effect waves-light" onClick={(e) => {login(e, this.state.username, this.state.password, this.updateErrors)}}>Submit
+                                                <button className="btn waves-effect waves-light" onClick={(e) => {this.props.context.login(e, this.state.username, this.state.password, this.updateErrors)}}>Submit
                                                     <i className="material-icons right">send</i>
                                                 </button>
                                             </div>
@@ -71,13 +70,11 @@ class Login extends Component {
                                         </form>
                                     </div>
                                 </div>
-                            </div>) 
-                        
-                    )}
-                </AuthConsumer>
+                            </div>)
+                        } 
             </div>
         );
     }
 }
 
-export default Login;
+export default withAuthContext(Login);

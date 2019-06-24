@@ -1,15 +1,11 @@
 import React from 'react';
-import { AuthConsumer } from './AuthContext';
+import withAuthContext from './withAuthContext';
 
-export default () => (
-    <div>
-        <AuthConsumer>
-            {({ user }) => (
-            <div className="container">
-                    <h2>Protected Route, Dashboard. Current user:</h2>
-                    <p>{JSON.stringify(user)}</p>
-            </div>
-            )}
-        </AuthConsumer>
+const Dashboard = (props) => (
+    <div className="container">
+            <h2>Protected Route, Dashboard. Current user:</h2>
+            <p>{JSON.stringify(props.context.user)}</p>
     </div>
 )
+
+export default withAuthContext(Dashboard);
